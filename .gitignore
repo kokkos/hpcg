@@ -1,4 +1,4 @@
 out
 *.swp
-
+.cproject
 .DS_Store

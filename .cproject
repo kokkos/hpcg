@@ -1,55 +1,88 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="cdt.managedbuild.toolchain.gnu.macosx.base.1295776514">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.macosx.base.1295776514" moduleId="org.eclipse.cdt.core.settings" name="Default">
+		<cconfiguration id="com.nvidia.cuda.ide.toolchain.on_path.488014894">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.nvidia.cuda.ide.toolchain.on_path.488014894" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.MachO64" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="com.nvidia.cuda.ide.elf" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.nvidia.cuda.ide.cubin" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.nvidia.cuda.ide.macho" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="nvcc.errorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" id="cdt.managedbuild.toolchain.gnu.macosx.base.1295776514" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="cdt.managedbuild.toolchain.gnu.macosx.base.1295776514.988925349" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base.710269362" name="cdt.managedbuild.toolchain.gnu.macosx.base" superClass="cdt.managedbuild.toolchain.gnu.macosx.base">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.MachO64" id="cdt.managedbuild.target.gnu.platform.macosx.base.172807008" name="Debug Platform" osList="macosx" superClass="cdt.managedbuild.target.gnu.platform.macosx.base"/>
-							<builder id="cdt.managedbuild.target.gnu.builder.macosx.base.878481619" managedBuildOn="false" name="Gnu Make Builder.Default" superClass="cdt.managedbuild.target.gnu.builder.macosx.base"/>
-							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.70944982" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base"/>
-							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.485727760" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
-								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.884030026" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
+				<configuration buildProperties="" description="" id="com.nvidia.cuda.ide.toolchain.on_path.488014894" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="com.nvidia.cuda.ide.toolchain.on_path.488014894.458310030" name="/" resourcePath="">
+						<toolChain id="com.nvidia.cuda.ide.toolchain.on_path.1432277695" name="CUDA Toolkit on the path" superClass="com.nvidia.cuda.ide.toolchain.on_path">
+							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.1646488634" isAbstract="false" name="Debug Platform" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
+							<builder id="com.nvidia.cuda.ide.builder.698226227" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="CUDA Toolkit 9.0 Builder" superClass="com.nvidia.cuda.ide.builder"/>
+							<tool id="nvcc.compiler.base.996639953" name="NVCC Compiler" superClass="nvcc.compiler.base">
+								<option id="nvcc.compiler.pic.231220289" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
+								<option id="nvcc.compiler.include.paths.1308015014" superClass="nvcc.compiler.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/projects/sems/install/rhel6-x86_64/kokkos/tpl/hwloc/1.10.1/gcc/5.3.0/base/include"/>
+									<listOptionValue builtIn="false" value="/projects/sems/install/rhel6-x86_64/kokkos/tpl/hwloc/1.10.1/gcc/4.4.7/base/include"/>
+									<listOptionValue builtIn="false" value="/projects/x86-64/openmpi/2.0.1/gcc/5.3.0/cuda/8.0.44/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Kokkos/core/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Kokkos/algorithms/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Kokkos/containers/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KokkosKernels/src/blas}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KokkosKernels/src/blas/impl}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KokkosKernels/src/sparse}&quot;"/>
+								</option>
+								<inputType id="nvcc.compiler.input.cu.707463627" superClass="nvcc.compiler.input.cu"/>
+								<inputType id="nvcc.compiler.input.cpp.758672417" superClass="nvcc.compiler.input.cpp"/>
+								<inputType id="nvcc.compiler.input.c.419817753" superClass="nvcc.compiler.input.c"/>
+							</tool>
+							<tool id="nvcc.linker.base.1773778467" name="NVCC Linker" superClass="nvcc.linker.base">
+								<inputType id="nvcc.linker.input.262920041" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.base.98198800" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.267586420" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.448263315" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.1571131150" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.570032627" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.886264201" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2039097568" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							<tool id="nvcc.archiver.base.507038223" name="NVCC Archiver" superClass="nvcc.archiver.base"/>
+							<tool id="com.nvidia.host.assembler.481395864" name="Host Assembler" superClass="com.nvidia.host.assembler">
+								<option id="gnu.both.asm.option.include.paths.752770756" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/projects/sems/install/rhel6-x86_64/kokkos/tpl/hwloc/1.10.1/gcc/5.3.0/base/include"/>
+									<listOptionValue builtIn="false" value="/projects/sems/install/rhel6-x86_64/kokkos/tpl/hwloc/1.10.1/gcc/4.4.7/base/include"/>
+									<listOptionValue builtIn="false" value="/projects/x86-64/openmpi/2.0.1/gcc/5.3.0/cuda/8.0.44/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Kokkos/core/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Kokkos/algorithms/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Kokkos/containers/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KokkosKernels/src/blas}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KokkosKernels/src/blas/impl}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/KokkosKernels/src/sparse}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.994438119" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 				</configuration>
 			</storageModule>
+			<storageModule moduleId="com.nvidia.cuda.ide.build.project.ICudaProjectConfiguration"/>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="HPCG.null.214097057" name="HPCG"/>
-	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<project id="HPCG.null.1219231881" name="HPCG"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.toolchain.on_path.488014894;com.nvidia.cuda.ide.toolchain.on_path.488014894.458310030;nvcc.compiler.base.996639953;nvcc.compiler.input.cu.707463627">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.toolchain.on_path.488014894;com.nvidia.cuda.ide.toolchain.on_path.488014894.458310030;nvcc.compiler.base.996639953;nvcc.compiler.input.c.419817753">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.toolchain.on_path.488014894;com.nvidia.cuda.ide.toolchain.on_path.488014894.458310030;nvcc.compiler.base.996639953;nvcc.compiler.input.cpp.758672417">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>

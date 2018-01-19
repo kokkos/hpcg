@@ -76,6 +76,8 @@ int main(int argc, char * argv[]) {
   MPI_Init(&argc, &argv);
 #endif
 
+  Kokkos::initialize(argc,argv);
+
   HPCG_Params params;
 
   HPCG_Init(&argc, &argv, params);
@@ -371,6 +373,8 @@ int main(int argc, char * argv[]) {
 
 
   HPCG_Finalize();
+
+  Kokkos::finalize();
 
   // Finish up
 #ifndef HPCG_NO_MPI

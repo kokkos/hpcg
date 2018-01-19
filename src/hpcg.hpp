@@ -21,6 +21,7 @@
 #ifndef HPCG_HPP
 #define HPCG_HPP
 
+#include <Kokkos_Core.hpp>
 #include <fstream>
 #include "Geometry.hpp"
 
