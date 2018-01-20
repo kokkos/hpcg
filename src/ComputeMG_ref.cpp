@@ -25,6 +25,7 @@
 #include "ComputeProlongation_ref.hpp"
 #include <cassert>
 #include <iostream>
+#include <Kokkos_Core.hpp>
 
 /*!
 
@@ -37,6 +38,7 @@
   @see ComputeMG
 */
 int ComputeMG_ref(const SparseMatrix & A, const Vector & r, Vector & x) {
+  Kokkos::Profiling::pushRegion("ComputeMG Reference");
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values
 
   ZeroVector(x); // initialize x to zero
@@ -59,6 +61,7 @@ int ComputeMG_ref(const SparseMatrix & A, const Vector & r, Vector & x) {
     ierr = ComputeSYMGS_ref(A, r, x);
     if (ierr!=0) return ierr;
   }
+  Kokkos::Profiling::popRegion();
   return 0;
 }
 

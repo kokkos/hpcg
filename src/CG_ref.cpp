@@ -58,6 +58,7 @@
 int CG_ref(const SparseMatrix & A, CGData & data, const Vector & b, Vector & x,
     const int max_iter, const double tolerance, int & niters, double & normr, double & normr0,
     double * times, bool doPreconditioning) {
+  Kokkos::Profiling::pushRegion("CG Solve Reference");
 
   double t_begin = mytimer();  // Start timing right away
   normr = 0.0;
@@ -140,6 +141,7 @@ int CG_ref(const SparseMatrix & A, CGData & data, const Vector & b, Vector & x,
 //  times[6] += t6; // exchange halo time
 //#endif
   times[0] += mytimer() - t_begin;  // Total time. All done...
+  Kokkos::Profiling::popRegion();
   return 0;
 }
 

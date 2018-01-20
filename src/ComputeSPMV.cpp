@@ -20,6 +20,7 @@
 
 #include "ComputeSPMV.hpp"
 #include "ComputeSPMV_ref.hpp"
+#include <Kokkos_Core.hpp>
 
 /*!
   Routine to compute sparse matrix vector product y = Ax where:
@@ -38,8 +39,11 @@
   @see ComputeSPMV_ref
 */
 int ComputeSPMV( const SparseMatrix & A, Vector & x, Vector & y) {
+  Kokkos::Profiling::pushRegion("ComputeSPMV");
 
   // This line and the next two lines should be removed and your version of ComputeSPMV should be used.
   A.isSpmvOptimized = false;
-  return ComputeSPMV_ref(A, x, y);
+  int result = ComputeSPMV_ref(A, x, y);
+  Kokkos::Profiling::popRegion();
+  return result;
 }

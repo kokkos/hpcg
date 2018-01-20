@@ -20,6 +20,7 @@
 
 #include "ComputeMG.hpp"
 #include "ComputeMG_ref.hpp"
+#include <Kokkos_Core.hpp>
 
 /*!
   @param[in] A the known system matrix
@@ -31,8 +32,11 @@
   @see ComputeMG_ref
 */
 int ComputeMG(const SparseMatrix  & A, const Vector & r, Vector & x) {
+  Kokkos::Profiling::pushRegion("ComputeMG");
 
   // This line and the next two lines should be removed and your version of ComputeSYMGS should be used.
   A.isMgOptimized = false;
-  return ComputeMG_ref(A, r, x);
+  int result = ComputeMG_ref(A, r, x);
+  Kokkos::Profiling::popRegion();
+  return result;
 }

@@ -28,6 +28,7 @@
 #include <omp.h>
 #endif
 #include <cassert>
+#include <Kokkos_Core.hpp>
 
 /*!
   Routine to compute matrix vector product y = Ax where:
@@ -45,6 +46,7 @@
   @see ComputeSPMV
 */
 int ComputeSPMV_ref( const SparseMatrix & A, Vector & x, Vector & y) {
+  Kokkos::Profiling::pushRegion("ComputeSPMV Reference");
 
   assert(x.localLength>=A.localNumberOfColumns); // Test vector lengths
   assert(y.localLength>=A.localNumberOfRows);
@@ -68,5 +70,6 @@ int ComputeSPMV_ref( const SparseMatrix & A, Vector & x, Vector & y) {
       sum += cur_vals[j]*xv[cur_inds[j]];
     yv[i] = sum;
   }
+  Kokkos::Profiling::popRegion();
   return 0;
 }

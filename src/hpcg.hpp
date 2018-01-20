@@ -21,6 +21,9 @@
 #ifndef HPCG_HPP
 #define HPCG_HPP
 
+#ifndef HPCG_CONTIGUOUS_ARRAYS
+#define HPCG_CONTIGUOUS_ARRAYS
+#endif
 #include <Kokkos_Core.hpp>
 #include <fstream>
 #include "Geometry.hpp"

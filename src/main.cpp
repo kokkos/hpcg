@@ -115,6 +115,7 @@ int main(int argc, char * argv[]) {
   // Problem setup Phase //
   /////////////////////////
 
+  Kokkos::Profiling::pushRegion("Problem Setup");
 #ifdef HPCG_DEBUG
   double t1 = mytimer();
 #endif
@@ -165,6 +166,7 @@ int main(int argc, char * argv[]) {
   InitializeSparseCGData(A, data);
 
 
+  Kokkos::Profiling::popRegion();
 
   ////////////////////////////////////
   // Reference SpMV+MG Timing Phase //
@@ -186,6 +188,7 @@ int main(int argc, char * argv[]) {
 
   int numberOfCalls = 10;
   if (quickPath) numberOfCalls = 1; //QuickPath means we do on one call of each block of repetitive code
+  Kokkos::Profiling::pushRegion("Reference SpMV+MG");
   double t_begin = mytimer();
   for (int i=0; i< numberOfCalls; ++i) {
     ierr = ComputeSPMV_ref(A, x_overlap, b_computed); // b_computed = A*x_overlap
@@ -194,6 +197,7 @@ int main(int argc, char * argv[]) {
     if (ierr) HPCG_fout << "Error in call to MG: " << ierr << ".\n" << endl;
   }
   times[8] = (mytimer() - t_begin)/((double) numberOfCalls);  // Total time divided by number of calls.
+  Kokkos::Profiling::popRegion();
 #ifdef HPCG_DEBUG
   if (rank==0) HPCG_fout << "Total SpMV+MG timing phase execution time in main (sec) = " << mytimer() - t1 << endl;
 #endif
@@ -202,6 +206,7 @@ int main(int argc, char * argv[]) {
   // Reference CG Timing Phase //
   ///////////////////////////////
 
+  Kokkos::Profiling::pushRegion("Reference CG");
 #ifdef HPCG_DEBUG
   t1 = mytimer();
 #endif
@@ -228,9 +233,11 @@ int main(int argc, char * argv[]) {
   double refTolerance = normr / normr0;
 
   // Call user-tunable set up function.
+  Kokkos::Profiling::pushRegion("Reference CG::OptimizeProblem");
   double t7 = mytimer();
   OptimizeProblem(A, data, b, x, xexact);
   t7 = mytimer() - t7;
+  Kokkos::Profiling::popRegion();
   times[7] = t7;
 #ifdef HPCG_DEBUG
   if (rank==0) HPCG_fout << "Total problem setup time in main (sec) = " << mytimer() - t1 << endl;
@@ -239,12 +246,14 @@ int main(int argc, char * argv[]) {
 #ifdef HPCG_DETAILED_DEBUG
   if (geom->size == 1) WriteProblem(*geom, A, b, x, xexact);
 #endif
+  Kokkos::Profiling::popRegion();
 
 
   //////////////////////////////
   // Validation Testing Phase //
   //////////////////////////////
 
+  Kokkos::Profiling::pushRegion("Validation Testing Phase");
 #ifdef HPCG_DEBUG
   t1 = mytimer();
 #endif
@@ -258,7 +267,9 @@ int main(int argc, char * argv[]) {
 #ifdef HPCG_DEBUG
   if (rank==0) HPCG_fout << "Total validation (TestCG and TestSymmetry) execution time in main (sec) = " << mytimer() - t1 << endl;
 #endif
+  Kokkos::Profiling::popRegion();
 
+  Kokkos::Profiling::pushRegion("Optimized CG Setup");
 #ifdef HPCG_DEBUG
   t1 = mytimer();
 #endif
@@ -308,6 +319,8 @@ int main(int argc, char * argv[]) {
       HPCG_fout << "Failed to reduce the residual " << tolerance_failures << " times." << endl;
   }
 
+  Kokkos::Profiling::popRegion();
+
   ///////////////////////////////
   // Optimized CG Timing Phase //
   ///////////////////////////////
@@ -326,6 +339,7 @@ int main(int argc, char * argv[]) {
 #endif
 
   /* This is the timed run for a specified amount of time. */
+  Kokkos::Profiling::pushRegion("Optimized CG");
 
   optMaxIters = optNiters;
   double optTolerance = 0.0;  // Force optMaxIters iterations
@@ -349,18 +363,24 @@ int main(int argc, char * argv[]) {
   if (ierr) HPCG_fout << "Error in call to compute_residual: " << ierr << ".\n" << endl;
   if (rank==0) HPCG_fout << "Difference between computed and exact  = " << residual << ".\n" << endl;
 #endif
+  Kokkos::Profiling::popRegion();
 
+  Kokkos::Profiling::pushRegion("TestNorms");
   // Test Norm Results
   ierr = TestNorms(testnorms_data);
+  Kokkos::Profiling::popRegion();
 
   ////////////////////
   // Report Results //
   ////////////////////
 
   // Report results to YAML file
+  Kokkos::Profiling::pushRegion("Report Results");
   ReportResults(A, numberOfMgLevels, numberOfCgSets, refMaxIters, optMaxIters, &times[0], testcg_data, testsymmetry_data, testnorms_data, global_failure, quickPath);
+  Kokkos::Profiling::popRegion();
 
   // Clean up
+  Kokkos::Profiling::pushRegion("Clean up");
   DeleteMatrix(A); // This delete will recursively delete all coarse grid data
   DeleteCGData(data);
   DeleteVector(x);
@@ -373,6 +393,7 @@ int main(int argc, char * argv[]) {
 
 
   HPCG_Finalize();
+  Kokkos::Profiling::popRegion();
 
   Kokkos::finalize();
 
