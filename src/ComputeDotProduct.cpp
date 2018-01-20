@@ -50,8 +50,8 @@ int ComputeDotProduct(const local_int_t n, const Vector & x, const Vector & y,
 
   double local_result = 0.0;
 
-  Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_x(x.values,n);
-  Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_y(y.values,n);
+  Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_x(x.view,std::pair<local_int_t,local_int_t>(0,n));
+  Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_y(y.view,std::pair<local_int_t,local_int_t>(0,n));
   local_result = KokkosBlas::dot(v_x,v_y);
 
 #ifndef HPCG_NO_MPI

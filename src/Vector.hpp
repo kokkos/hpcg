@@ -23,6 +23,7 @@
 #include <cassert>
 #include <cstdlib>
 #include "Geometry.hpp"
+#include "Kokkos_Core.hpp"
 
 struct Vector_STRUCT {
   local_int_t localLength;  //!< length of local portion of the vector
@@ -32,7 +33,7 @@ struct Vector_STRUCT {
    used inside optimized ComputeSPMV().
    */
   void * optimizationData;
-
+  Kokkos::View<double*> view;
 };
 typedef struct Vector_STRUCT Vector;
 
@@ -43,8 +44,9 @@ typedef struct Vector_STRUCT Vector;
   @param[in] localLength Length of local portion of input vector
  */
 inline void InitializeVector(Vector & v, local_int_t localLength) {
+  v.view = Kokkos::View<double*>("Vector",localLength);
   v.localLength = localLength;
-  v.values = new double[localLength];
+  v.values = v.view.data();
   v.optimizationData = 0;
   return;
 }
@@ -55,9 +57,7 @@ inline void InitializeVector(Vector & v, local_int_t localLength) {
   @param[inout] v - On entrance v is initialized, on exit all its values are zero.
  */
 inline void ZeroVector(Vector & v) {
-  local_int_t localLength = v.localLength;
-  double * vv = v.values;
-  for (int i=0; i<localLength; ++i) vv[i] = 0.0;
+  Kokkos::deep_copy(v.view,0.0);
   return;
 }
 /*!
@@ -91,11 +91,12 @@ inline void FillRandomVector(Vector & v) {
   @param[in] w Output vector
  */
 inline void CopyVector(const Vector & v, Vector & w) {
-  local_int_t localLength = v.localLength;
+/*  local_int_t localLength = v.localLength;
   assert(w.localLength >= localLength);
   double * vv = v.values;
   double * wv = w.values;
-  for (int i=0; i<localLength; ++i) wv[i] = vv[i];
+  for (int i=0; i<localLength; ++i) wv[i] = vv[i];*/
+  Kokkos::deep_copy(w.view,v.view);
   return;
 }
 
@@ -107,7 +108,8 @@ inline void CopyVector(const Vector & v, Vector & w) {
  */
 inline void DeleteVector(Vector & v) {
 
-  delete [] v.values;
+  //delete [] v.values;
+  v.view = Kokkos::View<double*>();
   v.localLength = 0;
   return;
 }

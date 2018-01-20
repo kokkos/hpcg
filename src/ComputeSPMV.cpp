@@ -59,7 +59,7 @@ int ComputeSPMV( const SparseMatrix & A, Vector & x, Vector & y) {
 //  int result = ComputeSPMV_ref(A, x, y);
   Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_x(x.values,A.localNumberOfColumns);
   Kokkos::View<double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_y(y.values,A.localNumberOfRows);
-  KokkosSparse::spmv("N",1.0,A.localMatrix,v_x,0.0,v_y);
+  KokkosSparse::spmv("N",1.0,A.localMatrix,x.view,0.0,y.view);
   Kokkos::Profiling::popRegion();
   return 0;
 }
