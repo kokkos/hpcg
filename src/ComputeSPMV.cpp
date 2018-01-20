@@ -20,7 +20,13 @@
 
 #include "ComputeSPMV.hpp"
 #include "ComputeSPMV_ref.hpp"
+#ifndef HPCG_NO_MPI
+#include "ExchangeHalo.hpp"
+#endif
+
 #include <Kokkos_Core.hpp>
+#include <KokkosSparse_spmv.hpp>
+
 
 /*!
   Routine to compute sparse matrix vector product y = Ax where:
@@ -41,9 +47,19 @@
 int ComputeSPMV( const SparseMatrix & A, Vector & x, Vector & y) {
   Kokkos::Profiling::pushRegion("ComputeSPMV");
 
+  assert(x.localLength>=A.localNumberOfColumns); // Test vector lengths
+  assert(y.localLength>=A.localNumberOfRows);
+
+#ifndef HPCG_NO_MPI
+    ExchangeHalo(A,x);
+#endif
+
   // This line and the next two lines should be removed and your version of ComputeSPMV should be used.
-  A.isSpmvOptimized = false;
-  int result = ComputeSPMV_ref(A, x, y);
+  A.isSpmvOptimized = true;
+//  int result = ComputeSPMV_ref(A, x, y);
+  Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_x(x.values,A.localNumberOfColumns);
+  Kokkos::View<double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_y(y.values,A.localNumberOfRows);
+  KokkosSparse::spmv("N",1.0,A.localMatrix,v_x,0.0,v_y);
   Kokkos::Profiling::popRegion();
-  return result;
+  return 0;
 }
