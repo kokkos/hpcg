@@ -23,18 +23,15 @@
 
 #include <vector>
 #include <cassert>
+#include <hpcg.hpp>
 #include "Geometry.hpp"
 #include "Vector.hpp"
 #include "MGData.hpp"
-#if __cplusplus <= 201103L
-// for C++03
-#include <map>
-typedef std::map< global_int_t, local_int_t > GlobalToLocalMap;
-#else
-// for C++11 or greater
+#include <KokkosSparse_CrsMatrix.hpp>
 #include <unordered_map>
 using GlobalToLocalMap = std::unordered_map< global_int_t, local_int_t >;
-#endif
+
+typedef KokkosSparse::CrsMatrix<double,local_int_t,Kokkos::DefaultExecutionSpace,void,local_int_t> LocalSparseMatrix;
 
 struct SparseMatrix_STRUCT {
   char  * title; //!< name of the sparse matrix
@@ -56,9 +53,10 @@ struct SparseMatrix_STRUCT {
   mutable bool isMgOptimized;
   mutable bool isWaxpbyOptimized;
   /*!
-   This is for storing optimized data structres created in OptimizeProblem and
+   This is for storing optimized data structures created in OptimizeProblem and
    used inside optimized ComputeSPMV().
    */
+  LocalSparseMatrix localMatrix;
   mutable struct SparseMatrix_STRUCT * Ac; // Coarse grid matrix
   mutable MGData * mgData; // Pointer to the coarse level data for this fine matrix
   void * optimizationData;  // pointer that can be used to store implementation-specific data
@@ -114,6 +112,8 @@ inline void InitializeSparseMatrix(SparseMatrix & A, Geometry * geom) {
 #endif
   A.mgData = 0; // Fine-to-coarse grid transfer initially not defined.
   A.Ac =0;
+
+  A.localMatrix = LocalSparseMatrix();
   return;
 }
 
@@ -150,17 +150,10 @@ inline void ReplaceMatrixDiagonal(SparseMatrix & A, Vector & diagonal) {
  */
 inline void DeleteMatrix(SparseMatrix & A) {
 
-#ifndef HPCG_CONTIGUOUS_ARRAYS
-  for (local_int_t i = 0; i< A.localNumberOfRows; ++i) {
-    delete [] A.matrixValues[i];
-    delete [] A.mtxIndG[i];
-    delete [] A.mtxIndL[i];
-  }
-#else
-  delete [] A.matrixValues[0];
+  //delete [] A.matrixValues[0];
   delete [] A.mtxIndG[0];
-  delete [] A.mtxIndL[0];
-#endif
+  //delete [] A.mtxIndL[0];
+
   if (A.title)                  delete [] A.title;
   if (A.nonzerosInRow)             delete [] A.nonzerosInRow;
   if (A.mtxIndG) delete [] A.mtxIndG;
