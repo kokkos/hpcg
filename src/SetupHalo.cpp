@@ -45,5 +45,16 @@ void SetupHalo(SparseMatrix & A) {
   // However, any code must work for general unstructured sparse matrices.  Special knowledge about the
   // specific nature of the sparsity pattern may not be explicitly used.
 
-  return(SetupHalo_ref(A));
+  SetupHalo_ref(A);
+  A.localMatrix = LocalSparseMatrix("LocalMatrix",
+      A.localNumberOfRows,
+      A.localNumberOfColumns,
+      A.localNumberOfNonzeros,
+      A.localMatrix.values,
+      A.localMatrix.graph.row_map,
+      A.localMatrix.graph.entries
+      );
+
+
+
 }

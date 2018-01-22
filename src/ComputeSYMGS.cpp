@@ -55,7 +55,6 @@
 */
 int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x) {
 
-
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values
 
 #ifndef HPCG_NO_MPI
@@ -80,6 +79,7 @@ int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x) {
   LocalSparseMatrix local_matrix = A.localMatrix;
 
   KernelHandle kh;
+  kh.create_graph_coloring_handle(KokkosGraph::COLORING_SERIAL);
   kh.create_gs_handle();
   //kh.set_team_work_size(16);
   kh.set_dynamic_scheduling(false);
@@ -88,22 +88,12 @@ int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x) {
   const size_t num_cols_1 = local_matrix.numCols();
   const int apply_count = 1;
 
-/*  if (!skip_symbolic){
-    gauss_seidel_symbolic
-      (&kh, num_rows_1, num_cols_1, input_mat.graph.row_map, input_mat.graph.entries, is_symmetric_graph);
-  }
-
-  if (!skip_numeric){
-    gauss_seidel_numeric
-    (&kh, num_rows_1, num_cols_1, input_mat.graph.row_map, input_mat.graph.entries, input_mat.values, is_symmetric_graph);
-  }*/
 
   KokkosSparse::Experimental::symmetric_gauss_seidel_apply
     (&kh, num_rows_1, num_cols_1,
      local_matrix.graph.row_map, local_matrix.graph.entries, local_matrix.values,
-     r.view, x.view);
-
-
+     Kokkos::View<double*>(x.view,std::pair<size_t,size_t>(0,num_cols_1)), Kokkos::View<double*>(r.view,std::pair<size_t,size_t>(0,num_rows_1)));
+  kh.destroy_graph_coloring_handle();
   kh.destroy_gs_handle();
 
 /*  const local_int_t nrow = A.localNumberOfRows;
