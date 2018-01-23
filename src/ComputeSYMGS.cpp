@@ -53,13 +53,9 @@
 
   @see ComputeSYMGS_ref
 */
-int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x) {
+int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x, int num_apply) {
 
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values
-
-#ifndef HPCG_NO_MPI
-  ExchangeHalo(A,x);
-#endif
 
   LocalSparseMatrix local_matrix = A.localMatrix;
   const int apply_count = 1;
@@ -73,10 +69,14 @@ int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x) {
   KokkosSparse::Experimental::gauss_seidel_numeric
     (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values, true);
 
-  KokkosSparse::Experimental::symmetric_gauss_seidel_apply
-    (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values, 
-     x.view,r.view);
-     //Kokkos::View<double*>(x.view,std::pair<size_t,size_t>(0,num_cols_1)), Kokkos::View<const double*>(r.view,std::pair<size_t,size_t>(0,num_rows_1)));
+  for(int k = 0; k<num_apply; k++) {
+    #ifndef HPCG_NO_MPI
+      ExchangeHalo(A,x);
+    #endif
 
+    KokkosSparse::Experimental::symmetric_gauss_seidel_apply
+      (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values,
+       x.view,r.view);
+  }
   return 0;
 }

@@ -47,7 +47,7 @@ int ComputeMG(const SparseMatrix  & A, const Vector & r, Vector & x) {
   int ierr = 0;
   if (A.mgData!=0) { // Go to next coarse level if defined
     int numberOfPresmootherSteps = A.mgData->numberOfPresmootherSteps;
-    for (int i=0; i< numberOfPresmootherSteps; ++i) ierr += ComputeSYMGS(A, r, x);
+    ierr += ComputeSYMGS(A, r, x, numberOfPresmootherSteps);
     if (ierr!=0) return ierr;
     ierr = ComputeSPMV(A, x, *A.mgData->Axf); if (ierr!=0) return ierr;
     // Perform restriction operation using simple injection
@@ -55,7 +55,7 @@ int ComputeMG(const SparseMatrix  & A, const Vector & r, Vector & x) {
     ierr = ComputeMG(*A.Ac,*A.mgData->rc, *A.mgData->xc);  if (ierr!=0) return ierr;
     ierr = ComputeProlongation(A, x);  if (ierr!=0) return ierr;
     int numberOfPostsmootherSteps = A.mgData->numberOfPostsmootherSteps;
-    for (int i=0; i< numberOfPostsmootherSteps; ++i) ierr += ComputeSYMGS(A, r, x);
+    ierr += ComputeSYMGS(A, r, x, numberOfPostsmootherSteps);
     if (ierr!=0) return ierr;
   }
   else {
