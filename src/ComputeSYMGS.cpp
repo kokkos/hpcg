@@ -53,7 +53,7 @@
 
   @see ComputeSYMGS_ref
 */
-int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x, int num_apply) {
+int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x, int num_apply, bool do_numeric) {
 
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values
 
@@ -66,8 +66,9 @@ int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x, int num_
     A.coloring_done = true;
   }
 
-  KokkosSparse::Experimental::gauss_seidel_numeric
-    (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values, true);
+  if(do_numeric)
+    KokkosSparse::Experimental::gauss_seidel_numeric
+      (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values, true);
 
   for(int k = 0; k<num_apply; k++) {
     #ifndef HPCG_NO_MPI
