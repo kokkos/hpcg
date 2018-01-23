@@ -179,7 +179,8 @@ void GenerateProblem(SparseMatrix & A, Vector * b, Vector * x, Vector * xexact) 
   LocalSparseMatrix::index_type v_mtxIndL("MatrixLocalIndicies",localNumberOfNonzeros);
   LocalSparseMatrix::values_type v_mtxValues("MatrixValues",localNumberOfNonzeros);
 
-  Kokkos::parallel_scan("GenerateProblem::ComputeRowOffsets",localNumberOfRows,
+  Kokkos::parallel_scan("GenerateProblem::ComputeRowOffsets",
+      Kokkos::RangePolicy<Kokkos::DefaultHostExecutionSpace>(0,localNumberOfRows),
       KOKKOS_LAMBDA (const local_int_t& row, local_int_t& offset, bool final){
     offset += nonzerosInRow[row];
     if(final) {
@@ -197,8 +198,8 @@ void GenerateProblem(SparseMatrix & A, Vector * b, Vector * x, Vector * xexact) 
   double* matrix_values = matrixValues[0];
   local_int_t* matrix_indicies = mtxIndL[0];
   local_int_t number_of_teams = (localNumberOfRows+rows_per_team-1)/rows_per_team;
-  Kokkos::parallel_for("CopyMatrixToCRS",Kokkos::TeamPolicy<>(number_of_teams,team_size,8),
-      KOKKOS_LAMBDA (const Kokkos::TeamPolicy<>::member_type& team) {
+  Kokkos::parallel_for("CopyMatrixToCRS",Kokkos::TeamPolicy<Kokkos::DefaultHostExecutionSpace>(number_of_teams,team_size,8),
+      KOKKOS_LAMBDA (const Kokkos::TeamPolicy<Kokkos::DefaultHostExecutionSpace>::member_type& team) {
     const local_int_t first_row = team.league_rank() * rows_per_team;
     const local_int_t last_row  = first_row + rows_per_team <= localNumberOfRows ?
                                      first_row + rows_per_team : localNumberOfRows;

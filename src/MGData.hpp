@@ -64,7 +64,7 @@ inline void InitializeMGData(local_int_t * f2cOperator, Vector * rc, Vector * xc
  */
 inline void DeleteMGData(MGData & data) {
 
-  delete [] data.f2cOperator;
+  Kokkos::kokkos_free<>(data.f2cOperator);
   DeleteVector(*data.Axf);
   DeleteVector(*data.rc);
   DeleteVector(*data.xc);

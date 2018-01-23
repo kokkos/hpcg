@@ -12,7 +12,7 @@ MAKEFILE_PATH := $(subst Makefile,,$(abspath $(lastword $(MAKEFILE_LIST))))
 SRC = $(wildcard $(MAKEFILE_PATH)/src/*.cpp)
 HEADERS = $(wildcard $(MAKEFILE_PATH)/src/*.hpp)
 
-KOKKOS_CUDA_OPTIONS=enable_lambda
+KOKKOS_CUDA_OPTIONS=enable_lambda,force_uvm
 
 default: build
 	echo "Start Build"
