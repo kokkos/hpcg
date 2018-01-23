@@ -61,80 +61,22 @@ int ComputeSYMGS( const SparseMatrix & A, const Vector & r, Vector & x) {
   ExchangeHalo(A,x);
 #endif
 
-  typedef typename LocalSparseMatrix::StaticCrsGraphType graph_t;
-  typedef typename graph_t::row_map_type lno_view_t;
-  typedef typename graph_t::entries_type   lno_nnz_view_t;
-  typedef typename LocalSparseMatrix::values_type::non_const_type scalar_view_t;
-  typedef typename LocalSparseMatrix::device_type device_t;
-
-
-  typedef typename lno_view_t::value_type size_type;
-  typedef typename lno_nnz_view_t::value_type lno_t;
-  typedef typename scalar_view_t::value_type scalar_t;
-
-  typedef KokkosKernels::Experimental::KokkosKernelsHandle
-      <size_type,lno_t, scalar_t,
-      typename device_t::execution_space, typename device_t::memory_space,typename device_t::memory_space > KernelHandle;
-
   LocalSparseMatrix local_matrix = A.localMatrix;
-
-  KernelHandle kh;
-  kh.create_graph_coloring_handle(KokkosGraph::COLORING_SERIAL);
-  kh.create_gs_handle();
-  //kh.set_team_work_size(16);
-  kh.set_dynamic_scheduling(false);
-
-  const size_t num_rows_1 = local_matrix.numRows();
-  const size_t num_cols_1 = local_matrix.numCols();
   const int apply_count = 1;
 
-
-  KokkosSparse::Experimental::symmetric_gauss_seidel_apply
-    (&kh, num_rows_1, num_cols_1,
-     local_matrix.graph.row_map, local_matrix.graph.entries, local_matrix.values,
-     Kokkos::View<double*>(x.view,std::pair<size_t,size_t>(0,num_cols_1)), Kokkos::View<double*>(r.view,std::pair<size_t,size_t>(0,num_rows_1)));
-  kh.destroy_graph_coloring_handle();
-  kh.destroy_gs_handle();
-
-/*  const local_int_t nrow = A.localNumberOfRows;
-  double ** matrixDiagonal = A.matrixDiagonal;  // An array of pointers to the diagonal entries A.matrixValues
-  const double * const rv = r.values;
-  double * const xv = x.values;
-
-  for (local_int_t i=0; i< nrow; i++) {
-    const double * const currentValues = A.matrixValues[i];
-    const local_int_t * const currentColIndices = A.mtxIndL[i];
-    const int currentNumberOfNonzeros = A.nonzerosInRow[i];
-    const double  currentDiagonal = matrixDiagonal[i][0]; // Current diagonal value
-    double sum = rv[i]; // RHS value
-
-    for (int j=0; j< currentNumberOfNonzeros; j++) {
-      local_int_t curCol = currentColIndices[j];
-      sum -= currentValues[j] * xv[curCol];
-    }
-    sum += xv[i]*currentDiagonal; // Remove diagonal contribution from previous loop
-
-    xv[i] = sum/currentDiagonal;
-
+  if(!A.coloring_done) {
+    KokkosSparse::Experimental::gauss_seidel_symbolic
+      (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, true);
+    A.coloring_done = true;
   }
 
-  // Now the back sweep.
+  KokkosSparse::Experimental::gauss_seidel_numeric
+    (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values, true);
 
-  for (local_int_t i=nrow-1; i>=0; i--) {
-    const double * const currentValues = A.matrixValues[i];
-    const local_int_t * const currentColIndices = A.mtxIndL[i];
-    const int currentNumberOfNonzeros = A.nonzerosInRow[i];
-    const double  currentDiagonal = matrixDiagonal[i][0]; // Current diagonal value
-    double sum = rv[i]; // RHS value
-
-    for (int j = 0; j< currentNumberOfNonzeros; j++) {
-      local_int_t curCol = currentColIndices[j];
-      sum -= currentValues[j]*xv[curCol];
-    }
-    sum += xv[i]*currentDiagonal; // Remove diagonal contribution from previous loop
-
-    xv[i] = sum/currentDiagonal;
-  }*/
+  KokkosSparse::Experimental::symmetric_gauss_seidel_apply
+    (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, A.localMatrix.values, 
+     x.view,r.view);
+     //Kokkos::View<double*>(x.view,std::pair<size_t,size_t>(0,num_cols_1)), Kokkos::View<const double*>(r.view,std::pair<size_t,size_t>(0,num_rows_1)));
 
   return 0;
 }

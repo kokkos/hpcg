@@ -19,6 +19,8 @@
  */
 
 #include "OptimizeProblem.hpp"
+#include <KokkosSparse_gauss_seidel.hpp>
+
 /*!
   Optimizes the data structures used for CG iteration to increase the
   performance of the benchmark version of the preconditioned CG algorithm.
@@ -95,6 +97,9 @@ int OptimizeProblem(SparseMatrix & A, CGData & data, Vector & b, Vector & x, Vec
     colors[i] = counters[colors[i]]++;
 #endif
 
+  KokkosSparse::Experimental::gauss_seidel_symbolic
+      (&A.kh, A.localNumberOfRows, A.localNumberOfColumns, A.localMatrix.graph.row_map, A.localMatrix.graph.entries, true);
+  A.coloring_done = true;
   return 0;
 }
 

@@ -23,12 +23,15 @@
 
 #include <vector>
 #include <cassert>
+#include <unordered_map>
 #include <hpcg.hpp>
 #include "Geometry.hpp"
 #include "Vector.hpp"
 #include "MGData.hpp"
 #include <KokkosSparse_CrsMatrix.hpp>
-#include <unordered_map>
+#include <KokkosKernels_Handle.hpp>
+
+
 using GlobalToLocalMap = std::unordered_map< global_int_t, local_int_t >;
 
 typedef KokkosSparse::CrsMatrix<double,local_int_t,Kokkos::DefaultExecutionSpace,void,local_int_t> LocalSparseMatrix;
@@ -60,6 +63,25 @@ struct SparseMatrix_STRUCT {
   mutable struct SparseMatrix_STRUCT * Ac; // Coarse grid matrix
   mutable MGData * mgData; // Pointer to the coarse level data for this fine matrix
   void * optimizationData;  // pointer that can be used to store implementation-specific data
+
+
+  typedef typename LocalSparseMatrix::StaticCrsGraphType graph_t;
+  typedef typename graph_t::row_map_type lno_view_t;
+  typedef typename graph_t::entries_type   lno_nnz_view_t;
+  typedef typename LocalSparseMatrix::values_type::non_const_type scalar_view_t;
+  typedef typename LocalSparseMatrix::device_type device_t;
+
+
+  typedef typename lno_view_t::value_type size_type;
+  typedef typename lno_nnz_view_t::value_type lno_t;
+  typedef typename scalar_view_t::value_type scalar_t;
+
+  typedef KokkosKernels::Experimental::KokkosKernelsHandle
+      <size_type,lno_t, scalar_t,
+      typename device_t::execution_space, typename device_t::memory_space,typename device_t::memory_space > KernelHandle;
+
+  mutable KernelHandle kh;
+  mutable bool coloring_done;
 
 #ifndef HPCG_NO_MPI
   local_int_t numberOfExternalValues; //!< number of entries that are external to this process
@@ -114,6 +136,8 @@ inline void InitializeSparseMatrix(SparseMatrix & A, Geometry * geom) {
   A.Ac =0;
 
   A.localMatrix = LocalSparseMatrix();
+  A.coloring_done = false;
+  A.kh.create_gs_handle();
   return;
 }
 

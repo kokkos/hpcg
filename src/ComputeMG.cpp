@@ -25,7 +25,8 @@
 #include "ComputeProlongation.hpp"
 
 #include <Kokkos_Core.hpp>
-
+#include<KokkosSparse_spmv.hpp>
+#include<KokkosBlas1_dot.hpp>
 /*!
   @param[in] A the known system matrix
   @param[in] r the input vector
@@ -38,7 +39,6 @@
 int ComputeMG(const SparseMatrix  & A, const Vector & r, Vector & x) {
   Kokkos::Profiling::pushRegion("ComputeMG");
 
-  // This line and the next two lines should be removed and your version of ComputeSYMGS should be used.
   A.isMgOptimized = true;
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values
 
@@ -62,6 +62,7 @@ int ComputeMG(const SparseMatrix  & A, const Vector & r, Vector & x) {
     ierr = ComputeSYMGS(A, r, x);
     if (ierr!=0) return ierr;
   }
+
   Kokkos::Profiling::popRegion();
   return 0;
 }
