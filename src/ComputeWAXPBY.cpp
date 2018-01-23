@@ -42,6 +42,7 @@
 */
 int ComputeWAXPBY(const local_int_t n, const double alpha, const Vector & x,
     const double beta, const Vector & y, Vector & w, bool & isOptimized) {
+  Kokkos::Profiling::pushRegion("Optimized: ComputeWAXPBY");
 
   // This line and the next two lines should be removed and your version of ComputeWAXPBY should be used.
   isOptimized = true;
@@ -49,5 +50,6 @@ int ComputeWAXPBY(const local_int_t n, const double alpha, const Vector & x,
   Kokkos::View<const double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_y(y.view,std::pair<local_int_t,local_int_t>(0,n));
   Kokkos::View<double*,Kokkos::MemoryTraits<Kokkos::Unmanaged> > v_w(w.view,std::pair<local_int_t,local_int_t>(0,n));
   KokkosBlas::update(alpha,v_x,beta,v_y,0.0,v_w);
+  Kokkos::Profiling::popRegion();
   return 0;
 }

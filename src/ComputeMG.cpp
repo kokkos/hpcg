@@ -37,7 +37,7 @@
   @see ComputeMG_ref
 */
 int ComputeMG(const SparseMatrix  & A, const Vector & r, Vector & x) {
-  Kokkos::Profiling::pushRegion("ComputeMG");
+  Kokkos::Profiling::pushRegion("Optimized: ComputeMG");
 
   A.isMgOptimized = true;
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values

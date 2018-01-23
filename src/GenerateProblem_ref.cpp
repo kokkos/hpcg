@@ -48,6 +48,7 @@ using std::endl;
 */
 
 void GenerateProblem_ref(SparseMatrix & A, Vector * b, Vector * x, Vector * xexact) {
+  Kokkos::Profiling::pushRegion("Reference: GenerateProblem");
 
   // Make local copies of geometry information.  Use global_int_t since the RHS products in the calculations
   // below may result in global range values.
@@ -215,5 +216,6 @@ void GenerateProblem_ref(SparseMatrix & A, Vector * b, Vector * x, Vector * xexa
   A.matrixValues = matrixValues;
   A.matrixDiagonal = matrixDiagonal;
 
+  Kokkos::Profiling::popRegion();
   return;
 }

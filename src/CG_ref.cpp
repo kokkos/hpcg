@@ -58,7 +58,7 @@
 int CG_ref(const SparseMatrix & A, CGData & data, const Vector & b, Vector & x,
     const int max_iter, const double tolerance, int & niters, double & normr, double & normr0,
     double * times, bool doPreconditioning) {
-  Kokkos::Profiling::pushRegion("CG Solve Reference");
+  Kokkos::Profiling::pushRegion("Reference: CG");
 
   double t_begin = mytimer();  // Start timing right away
   normr = 0.0;

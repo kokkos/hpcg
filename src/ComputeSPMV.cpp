@@ -45,7 +45,7 @@
   @see ComputeSPMV_ref
 */
 int ComputeSPMV( const SparseMatrix & A, Vector & x, Vector & y) {
-  Kokkos::Profiling::pushRegion("ComputeSPMV");
+  Kokkos::Profiling::pushRegion("Optimized: ComputeSPMV");
 
   assert(x.localLength>=A.localNumberOfColumns); // Test vector lengths
   assert(y.localLength>=A.localNumberOfRows);

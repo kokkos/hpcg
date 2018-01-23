@@ -38,7 +38,7 @@
   @see ComputeMG
 */
 int ComputeMG_ref(const SparseMatrix & A, const Vector & r, Vector & x) {
-  Kokkos::Profiling::pushRegion("ComputeMG Reference");
+  Kokkos::Profiling::pushRegion("Reference: ComputeMG");
   assert(x.localLength==A.localNumberOfColumns); // Make sure x contain space for halo values
 
   ZeroVector(x); // initialize x to zero

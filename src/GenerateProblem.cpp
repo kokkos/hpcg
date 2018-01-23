@@ -42,6 +42,7 @@
 */
 
 void GenerateProblem(SparseMatrix & A, Vector * b, Vector * x, Vector * xexact) {
+  Kokkos::Profiling::pushRegion("Optimized: GenerateProblem");
 
   // The call to this reference version of GenerateProblem can be replaced with custom code.
   // However, the data structures must remain unchanged such that the CheckProblem function is satisfied.
@@ -261,5 +262,6 @@ void GenerateProblem(SparseMatrix & A, Vector * b, Vector * x, Vector * xexact) 
       v_rowOffsets,
       v_mtxIndL);
 
+  Kokkos::Profiling::popRegion();
   return;
 }

@@ -41,6 +41,7 @@
 */
 int ComputeWAXPBY_ref(const local_int_t n, const double alpha, const Vector & x,
     const double beta, const Vector & y, Vector & w) {
+  Kokkos::Profiling::pushRegion("Reference: ComputeWAXPBY");
 
   assert(x.localLength>=n); // Test vector lengths
   assert(y.localLength>=n);
@@ -66,5 +67,6 @@ int ComputeWAXPBY_ref(const local_int_t n, const double alpha, const Vector & x,
     for (local_int_t i=0; i<n; i++) wv[i] = alpha * xv[i] + beta * yv[i];
   }
 
+  Kokkos::Profiling::popRegion();
   return 0;
 }

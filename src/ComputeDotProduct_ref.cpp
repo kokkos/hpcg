@@ -45,6 +45,7 @@
 */
 int ComputeDotProduct_ref(const local_int_t n, const Vector & x, const Vector & y,
     double & result, double & time_allreduce) {
+  Kokkos::Profiling::pushRegion("Reference: ComputeDotProduct");
   assert(x.localLength>=n); // Test vector lengths
   assert(y.localLength>=n);
 
@@ -76,5 +77,6 @@ int ComputeDotProduct_ref(const local_int_t n, const Vector & x, const Vector & 
   result = local_result;
 #endif
 
+  Kokkos::Profiling::popRegion();
   return 0;
 }

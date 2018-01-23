@@ -46,6 +46,7 @@
 */
 int ComputeDotProduct(const local_int_t n, const Vector & x, const Vector & y,
     double & result, double & time_allreduce, bool & isOptimized) {
+  Kokkos::Profiling::pushRegion("Optimized: ComputeDotProduct");
   isOptimized = true;
 
   double local_result = 0.0;
@@ -66,6 +67,6 @@ int ComputeDotProduct(const local_int_t n, const Vector & x, const Vector & y,
   time_allreduce += 0.0;
   result = local_result;
 #endif
-
+  Kokkos::Profiling::popRegion();
   return 0;
 }
